@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,13 +20,14 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btTrai,btPhai, btTien, btLui;
+    Button btTrai,btPhai, btTien, btLui, btCheck;
     TextView t1;
+    EditText edtUUID;
     String address = null, name = null;
     BluetoothAdapter myBluetooth = null;
     BluetoothSocket btSocket = null;
     Set<BluetoothDevice> pairedDevices;
-    static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+    static UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +43,11 @@ public class MainActivity extends AppCompatActivity {
         btTien = findViewById(R.id.btTien);
         btTrai = findViewById(R.id.btTrai);
         btPhai = findViewById(R.id.btPhai);
-        bluetooth_connect_device();
+        edtUUID = findViewById(R.id.edtUUID);
 
+
+
+        bluetooth_connect_device();
 
         btTien.setOnTouchListener(new View.OnTouchListener()
         {   @Override
@@ -80,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void bluetooth_connect_device() throws IOException
     {
+        myUUID = UUID.fromString(edtUUID.getText().toString());
         try
         {
             myBluetooth = BluetoothAdapter.getDefaultAdapter();
