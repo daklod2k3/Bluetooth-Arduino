@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,12 +23,11 @@ public class MainActivity extends AppCompatActivity {
 
     Button btTrai,btPhai, btTien, btLui, btCheck;
     TextView t1;
-    EditText edtUUID;
     String address = null, name = null;
     BluetoothAdapter myBluetooth = null;
     BluetoothSocket btSocket = null;
     Set<BluetoothDevice> pairedDevices;
-    static UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+    final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +43,27 @@ public class MainActivity extends AppCompatActivity {
         btTien = findViewById(R.id.btTien);
         btTrai = findViewById(R.id.btTrai);
         btPhai = findViewById(R.id.btPhai);
-        edtUUID = findViewById(R.id.edtUUID);
+        btCheck = findViewById(R.id.btCheck);
+        t1 = findViewById(R.id.tl);
 
+        btCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!myBluetooth.isEnabled()) {
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtIntent, 1);
+                }
+                else{
+                    try {
+                        bluetooth_connect_device();
+                        t1.setText("Đã kết nối");
+                    } catch (IOException e) {
+                        t1.setText("Kết nối không thành công");
+                    }
+                }
 
+            }
+        });
 
         bluetooth_connect_device();
 
@@ -85,8 +103,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void bluetooth_connect_device() throws IOException
     {
-        myUUID = UUID.fromString(edtUUID.getText().toString());
-        try
+        myBluetooth = BluetoothAdapter.getDefaultAdapter();
+        address = myBluetooth.getAddress();
+        BluetoothDevice hc05 = myBluetooth.getRemoteDevice(address);
+        btSocket = hc05.createInsecureRfcommSocketToServiceRecord(myUUID);
+        btSocket.connect();
+        /*try
         {
             myBluetooth = BluetoothAdapter.getDefaultAdapter();
             address = myBluetooth.getAddress();
@@ -107,25 +129,12 @@ public class MainActivity extends AppCompatActivity {
         BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);//connects to the device's address and checks if it's available
         btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
         btSocket.connect();
-        t1 = findViewById(R.id.tl);
         try { t1.setText("BT Name: "+name+"\nBT Address: "+address); }
-        catch(Exception e){}
+        catch(Exception e){} */
     }
 
 
-    public void onClick(View v)
-    {
-        try
-        {
 
-        }
-        catch (Exception e)
-        {
-            Toast.makeText(getApplicationContext(),e.getMessage(), Toast.LENGTH_SHORT).show();
-
-        }
-
-    }
 
     private void gui(String i)
     {
