@@ -3,6 +3,7 @@ package com.locdactran.bluetootharduino;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
@@ -16,6 +17,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.button.MaterialButton;
+
 import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
@@ -69,20 +73,28 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         jt.setOnMoveListener(new JoystickView.OnMoveListener() {
             @Override
             public void onMove(int angle, int strength) {
-                if (angle>45 && angle<135) {
-                    gui((byte) 1);
+                if (strength >50) {
+                    if (angle>70 && angle<110) {
+                        gui((byte) 1);
+                    }
+                    if (angle>250 && angle<290) {
+                        gui((byte) 2);
+                    }
+
+                    if (angle>=110 && angle<=180) { //Tien Trai
+                        gui((byte) 3);
+                    }
+                    if (angle>180 && angle<=250) { //Lui Trai
+                        gui((byte) 7);
+                    }
+
+                    if (angle>=0 && angle<=70){ //Tien Phai
+                        gui((byte) 4);
+                    }
+                    if (angle>=290 && angle<=360){ //Lui Phai
+                        gui((byte) 8);
+                    }
                 }
-                if (angle>=135 && angle<=225) {
-                    gui((byte) 3);
-                }
-                if (angle>225 && angle<315) {
-                    gui((byte) 2);
-                }
-                if ((angle>0 && angle<45)||(angle>=315) && (angle<=360)){
-                    gui((byte) 4);
-                }
-                String vong = String.valueOf(angle);
-                t1.setText(vong);
                 if (strength == 0) {
                     gui((byte) 0);
                 }
@@ -150,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                         break;
                 }
         }
-
         return false;
     }
 }
